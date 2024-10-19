@@ -1,9 +1,16 @@
-import React from 'react'
+import Link from 'next/link';
+import { LuTent } from 'react-icons/lu';
+import { Button } from '../ui/button';
 
-const Logo = () => {
+function Logo() {
   return (
-    <div>Logo</div>
-  )
+    <Button size="icon" asChild>
+      <Link  href='/'>
+      {/* <LuTent className='w-6 h-6' /> */}
+      <LuTent style={{ width: '1.5rem', height: '1.5rem' }} />
+      </Link>
+    </Button>
+  );
 }
 
-export default Logo
+export default Logo;

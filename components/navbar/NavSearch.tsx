@@ -1,9 +1,12 @@
-import React from 'react'
+import { Input } from '../ui/input';
 
-const NavSearch = () => {
+function NavSearch() {
   return (
-    <div>NavSearch</div>
-  )
+    <Input
+      type='search'
+      placeholder='find a property...'
+      className='max-w-xs dark:bg-muted '
+    />
+  );
 }
-
-export default NavSearch
+export default NavSearch;
