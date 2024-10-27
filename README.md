@@ -2388,6 +2388,7 @@ export const fetchProperties = async ({
       image: true,
       price: true,
     },
+    
   });
   return properties;
 };
