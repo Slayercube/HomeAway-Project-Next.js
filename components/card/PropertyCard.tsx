@@ -38,10 +38,14 @@ function PropertyCard({ property }: { property: PropertyCardProps }) {
             night
           </p>
           {/* country and flag */}
+          <CountryFlagAndName countryCode={country} />
         </div>
       </Link>
       <div className='absolute top-5 right-5 z-5'>
         {/* favorite toggle button */}
+        <div className='absolute top-5 right-5 z-5'>
+  <FavoriteToggleButton propertyId={propertyId} />
+</div>
       </div>
     </article>
   );
