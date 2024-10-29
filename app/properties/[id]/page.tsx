@@ -13,6 +13,11 @@ import Description from '@/components/properties/Description';
 import Amenities from '@/components/properties/Amenities';
 import { Skeleton } from '@/components/ui/skeleton';
 import dynamic from 'next/dynamic';
+import SubmitReview from '@/components/reviews/SubmitReview';
+import PropertyReviews from '@/components/reviews/PropertyReviews';
+import { findExistingReview } from '@/utils/actions';
+import { auth } from '@clerk/nextjs/server';
+
 
 async function PropertyDetailsPage({ params }: { params: { id: string } }) {
   const property = await fetchPropertyDetails(params.id);
@@ -30,6 +35,11 @@ const DynamicMap = dynamic(
     loading: () => <Skeleton className='h-[400px] w-full' />,
   }
 );
+
+const { userId } = auth();
+const isNotOwner = property.profile.clerkId !== userId;
+const reviewDoesNotExist =
+  userId && isNotOwner && !(await findExistingReview(userId, property.id));
 
   return (
     <section>
@@ -64,7 +74,13 @@ const DynamicMap = dynamic(
       <BookingCalendar />
     </div>
   </section>
+  <>
+    {/* after two column section */}
+    <>{reviewDoesNotExist && <SubmitReview propertyId={property.id} />}</>;
+    <PropertyReviews propertyId={property.id} />
+  </>
     </section>
+    
   );
 }
 export default PropertyDetailsPage;
