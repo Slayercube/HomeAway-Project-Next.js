@@ -5,7 +5,6 @@ import ImageContainer from '@/components/properties/ImageContainer';
 import ShareButton from '@/components/properties/ShareButton';
 import { fetchPropertyDetails } from '@/utils/actions';
 import { redirect } from 'next/navigation';
-import BookingCalendar from '@/components/properties/booking/BookingCalendar';
 import PropertyDetails from '@/components/properties/PropertyDetails';
 import UserInfo from '@/components/properties/UserInfo';
 import { Separator } from '@radix-ui/react-dropdown-menu';
@@ -18,6 +17,24 @@ import PropertyReviews from '@/components/reviews/PropertyReviews';
 import { findExistingReview } from '@/utils/actions';
 import { auth } from '@clerk/nextjs/server';
 
+const DynamicMap = dynamic(
+  () => import('@/components/properties/PropertyMap'),
+  {
+    ssr: false,
+    loading: () => <Skeleton className='h-[400px] w-full' />,
+  }
+);
+
+const DynamicBookingWrapper = dynamic(
+  () => import('@/components/properties/booking/BookingWrapper'),
+  {
+    ssr: false,
+    loading: () => <Skeleton className='h-[200px] w-full' />,
+  }
+);
+
+
+
 
 async function PropertyDetailsPage({ params }: { params: { id: string } }) {
   const property = await fetchPropertyDetails(params.id);
@@ -27,14 +44,6 @@ async function PropertyDetailsPage({ params }: { params: { id: string } }) {
 
   const firstName = property.profile.firstName;
 const profileImage = property.profile.profileImage;
-
-const DynamicMap = dynamic(
-  () => import('@/components/properties/PropertyMap'),
-  {
-    ssr: false,
-    loading: () => <Skeleton className='h-[400px] w-full' />,
-  }
-);
 
 const { userId } = auth();
 const isNotOwner = property.profile.clerkId !== userId;
@@ -52,7 +61,7 @@ const reviewDoesNotExist =
     <ShareButton name={property.name} propertyId={property.id} />
     <FavoriteToggleButton propertyId={property.id} />
   </div>
-          <FavoriteToggleButton propertyId={property.id} />
+          {/* <FavoriteToggleButton propertyId={property.id} /> */}
         </div>
       </header>
       <ImageContainer mainImage={property.image} name={property.name} />
@@ -63,20 +72,24 @@ const reviewDoesNotExist =
         <PropertyRating inPage propertyId={property.id} />
       </div>
       <PropertyDetails details={details} />
-      <UserInfo profile={{ firstName, profileImage }} />;
+      <UserInfo profile={{ firstName, profileImage }} />
       <Separator className='mt-4' />
 <Description description={property.description} />
 <Amenities amenities={property.amenities} />
-<DynamicMap countryCode={property.country} />;
+<DynamicMap countryCode={property.country} />
     </div>
     <div className='lg:col-span-4 flex flex-col items-center'>
       {/* calendar */}
-      <BookingCalendar />
+      <DynamicBookingWrapper
+      propertyId={property.id}
+      price={property.price}
+      bookings={property.bookings}
+    />
     </div>
   </section>
   <>
     {/* after two column section */}
-    <>{reviewDoesNotExist && <SubmitReview propertyId={property.id} />}</>;
+    <>{reviewDoesNotExist && <SubmitReview propertyId={property.id} />}</>
     <PropertyReviews propertyId={property.id} />
   </>
     </section>
